@@ -1,8 +1,9 @@
 import React from 'react';
-import { NavLink, Outlet, Link } from 'react-router';
-import { LayoutDashboard, Package, ShoppingBag, Ticket, Truck, Home } from 'lucide-react';
+import { NavLink, Outlet, Link, useNavigate } from 'react-router';
+import { LayoutDashboard, Package, ShoppingBag, Ticket, Truck, Home, LogOut } from 'lucide-react';
 
 export default function AdminLayout() {
+  const navigate = useNavigate();
   const navItems = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/admin/products', label: 'Products', icon: Package },
@@ -11,6 +12,11 @@ export default function AdminLayout() {
     { to: '/admin/shipping', label: 'Shipping', icon: Truck },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem('arbeit-user');
+    navigate('/login');
+  };
+
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 font-sans antialiased flex flex-col md:flex-row">
       <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-[#070b16]/60 backdrop-blur-xl flex flex-col">
@@ -18,10 +24,20 @@ export default function AdminLayout() {
           <Link to="/admin/dashboard" className="text-lg font-bold tracking-tight text-white font-display">
             Admin Panel
           </Link>
-          <Link to="/" className="text-slate-400 hover:text-white transition-colors duration-200" title="Storefront">
-            <Home className="w-5 h-5" />
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/" className="text-slate-400 hover:text-white transition-colors duration-200" title="Storefront">
+              <Home className="w-5 h-5" />
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-slate-400 hover:text-red-400 transition-colors duration-200 cursor-pointer"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
         </div>
+        
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;

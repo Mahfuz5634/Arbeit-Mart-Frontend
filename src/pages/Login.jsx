@@ -25,7 +25,7 @@ const Login = () => {
   useEffect(() => {
     const loggedInUser = localStorage.getItem('arbeit-user');
     if (loggedInUser) {
-      navigate('/');
+      navigate('/admin/dashboard');
     }
   }, [navigate]);
 
@@ -58,7 +58,7 @@ const Login = () => {
       addToast(`Welcome back, ${data.user?.name || 'Administrator'}!`, 'success');
       
       setTimeout(() => {
-        navigate('/');
+        navigate('/admin/dashboard');
       }, 1000);
 
     } catch (err) {
@@ -85,9 +85,9 @@ const Login = () => {
             <div className="absolute -bottom-24 -right-24 h-48 w-48 rounded-full bg-violet-600/10 blur-[80px] pointer-events-none" />
 
             <div className="text-center mb-8">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Welcome Back</span>
-              <h2 className="text-2xl font-bold tracking-tight text-white mt-1.5 font-display">Sign In to Grid</h2>
-              <p className="text-xs text-slate-400 mt-1">Enter your credentials to access your workspace gear.</p>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Admin Area</span>
+              <h2 className="text-2xl font-bold tracking-tight text-white mt-1.5 font-display">Sign In</h2>
+              <p className="text-xs text-slate-400 mt-1">Enter your credentials to access the dashboard panel.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
@@ -122,7 +122,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="w-full rounded-xl bg-white/[0.02] border border-white/5 py-3 pl-10 pr-12 text-sm text-slate-200 placeholder-slate-600 focus:bg-[#090d1f] focus:border-indigo-500/50 focus:outline-none transition-all duration-300"
+                    className="w-full rounded-xl bg-[#020617] border border-white/10 py-3 pl-10 pr-12 text-sm text-slate-200 placeholder-slate-600 focus:bg-[#090d1f] focus:border-indigo-500/50 focus:outline-none transition-all duration-300"
                   />
                   <button
                     type="button"
@@ -147,10 +147,6 @@ const Login = () => {
                 {!loading && <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />}
               </button>
             </form>
-
-            <div className="mt-8 border-t border-white/5 pt-5 text-center text-[10px] text-slate-500 font-medium tracking-wide">
-              Access restricted to authorized administrators only.
-            </div>
           </div>
         </main>
       </div>

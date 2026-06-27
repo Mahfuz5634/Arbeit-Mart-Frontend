@@ -36,7 +36,7 @@ const Hero = () => {
   return (
     <section 
       ref={heroRef} 
-      className="relative flex min-h-[75vh] items-center justify-center overflow-hidden bg-slate-950 pt-20 pb-24 md:min-h-[85vh] md:pt-32 md:pb-40"
+      className="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-slate-950 pt-20 pb-24 md:min-h-[80vh] md:pt-32 md:pb-40"
     >
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80 mix-blend-luminosity"
@@ -48,21 +48,21 @@ const Hero = () => {
       <div className="absolute top-1/2 right-1/10 h-[500px] w-[500px] -translate-y-1/2 rounded-full bg-violet-600/10 blur-[150px] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-        <h1 className="gsap-title text-4xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl font-display leading-[1.1]">
-          Elevate your setup. <br />
-          <span className="text-gradient">Premium tech boutique.</span>
+        <h1 className="gsap-title text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl font-display leading-[1.2]">
+          Premium Workspace Gear. <br />
+          <span className="text-gradient">Crafted for Daily Comfort.</span>
         </h1>
 
-        <p className="gsap-desc mx-auto mt-6 max-w-xl text-base sm:text-lg font-light text-slate-400 leading-relaxed">
-          Discover a curated selection of lab-grade mechanical keyboards, high-fidelity audio hardware, smart wearables, and heavyweight minimalist apparel. Enjoy secure payments and fast worldwide shipping.
+        <p className="gsap-desc mx-auto mt-6 max-w-xl text-sm sm:text-base font-light text-slate-400 leading-relaxed">
+          Shop premium mechanical keyboards, workspace accessories, minimalist apparel, audio gear, and stealth wearables.
         </p>
 
-        <div className="gsap-btn mt-10 flex justify-center">
+        <div className="gsap-btn mt-14 flex justify-center">
           <a
             href="#catalog"
             className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-white px-8 py-3.5 text-sm font-medium text-black transition-all duration-300 hover:bg-slate-100 hover:shadow-[0_0_30px_5px_rgba(99,102,241,0.25)] hover:scale-[1.02]"
           >
-            Explore Catalog 
+            Shop the Collection 
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </div>

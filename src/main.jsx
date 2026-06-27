@@ -6,6 +6,7 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from "react-router";
 import ProductDetail from "./pages/ProductDetail.jsx";
 import Login from "./pages/Login.jsx";
+import Checkout from "./pages/Checkout.jsx";
 
 import AdminLayout from "./components/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/checkout",
+    element: <Checkout />,
   },
   {
     path: "/product/:id",
