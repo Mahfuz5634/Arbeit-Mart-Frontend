@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import ProductDetail from "./pages/ProductDetail.jsx";
 import Login from "./pages/Login.jsx";
 import Checkout from "./pages/Checkout.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 import AdminLayout from "./components/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
@@ -33,28 +34,33 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/admin",
-    element: <AdminLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "dashboard",
-        element: <AdminDashboard />,
-      },
-      {
-        path: "products",
-        element: <AdminProducts />,
-      },
-      {
-        path: "orders",
-        element: <AdminOrders />,
-      },
-      {
-        path: "coupons",
-        element: <AdminCoupons />,
-      },
-      {
-        path: "shipping",
-        element: <AdminShipping />,
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+          {
+            path: "dashboard",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "products",
+            element: <AdminProducts />,
+          },
+          {
+            path: "orders",
+            element: <AdminOrders />,
+          },
+          {
+            path: "coupons",
+            element: <AdminCoupons />,
+          },
+          {
+            path: "shipping",
+            element: <AdminShipping />,
+          },
+        ],
       },
     ],
   },
