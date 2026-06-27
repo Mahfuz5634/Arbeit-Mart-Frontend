@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getDb, saveDb, initialShipping } from '../../utils/adminDb';
-import { Plus, Trash2, Truck, DollarSign } from 'lucide-react';
+import { Plus, Trash2, Truck } from 'lucide-react';
 
 export default function Shipping() {
   const [shippingZones, setShippingZones] = useState([]);
@@ -8,35 +7,61 @@ export default function Shipping() {
   const [region, setRegion] = useState('');
   const [cost, setCost] = useState('');
 
+  const fetchShippingZones = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/shipping');
+      const data = await res.json();
+      setShippingZones(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch shipping zones", error);
+    }
+  };
+
   useEffect(() => {
-    setShippingZones(getDb('admin-shipping', initialShipping));
+    fetchShippingZones();
   }, []);
 
-  const handleCreateZone = (e) => {
+  const handleCreateZone = async (e) => {
     e.preventDefault();
     if (!name.trim() || !region.trim() || !cost) return;
 
-    const newZone = {
-      id: Date.now(),
-      name: name.trim(),
-      region: region.trim(),
-      cost: Number(cost)
-    };
+    try {
+      const res = await fetch('http://localhost:5000/api/shipping', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          zoneName: name.trim(),
+          regions: region.split(',').map(r => r.trim()).filter(r => r.length > 0),
+          cost: Number(cost)
+        })
+      });
 
-    const updated = [...shippingZones, newZone];
-    setShippingZones(updated);
-    saveDb('admin-shipping', updated);
-
-    setName('');
-    setRegion('');
-    setCost('');
+      if (res.ok) {
+        fetchShippingZones();
+        setName('');
+        setRegion('');
+        setCost('');
+      } else {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("Failed to create shipping zone", error);
+    }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this shipping zone?")) return;
-    const updated = shippingZones.filter(z => z.id !== id);
-    setShippingZones(updated);
-    saveDb('admin-shipping', updated);
+    try {
+      const res = await fetch(`http://localhost:5000/api/shipping/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        fetchShippingZones();
+      }
+    } catch (error) {
+      console.error("Failed to delete shipping zone", error);
+    }
   };
 
   return (
@@ -64,19 +89,19 @@ export default function Shipping() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-400 block mb-1">Covered Regions</label>
+              <label className="text-xs font-semibold text-slate-400 block mb-1">Covered Regions (Comma separated)</label>
               <input
                 type="text"
                 required
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                placeholder="e.g. USA, Canada"
+                placeholder="e.g. Dhaka, Chittagong"
                 className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-400 block mb-1">Flat Rate Cost ($)</label>
+              <label className="text-xs font-semibold text-slate-400 block mb-1">Flat Rate Cost (৳)</label>
               <input
                 type="number"
                 required
@@ -117,20 +142,22 @@ export default function Shipping() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {shippingZones.map((zone) => (
-                    <tr key={zone.id} className="hover:bg-white/[0.01] transition-colors">
+                    <tr key={zone._id} className="hover:bg-white/[0.01] transition-colors">
                       <td className="py-3.5 px-4 text-white font-medium">
                         <span className="flex items-center gap-2">
                           <Truck className="w-4 h-4 text-indigo-400" />
-                          {zone.name}
+                          {zone.zoneName}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-slate-400">{zone.region}</td>
+                      <td className="py-3.5 px-4 text-xs text-slate-400">
+                        {Array.isArray(zone.regions) ? zone.regions.join(', ') : zone.regions}
+                      </td>
                       <td className="py-3.5 px-4 font-semibold text-white text-right">
-                        ${zone.cost.toFixed(2)}
+                        ৳ {zone.cost.toLocaleString()}
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <button
-                          onClick={() => handleDelete(zone.id)}
+                          onClick={() => handleDelete(zone._id)}
                           className="p-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />

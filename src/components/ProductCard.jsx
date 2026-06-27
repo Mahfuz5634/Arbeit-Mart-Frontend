@@ -4,12 +4,12 @@ import { Eye } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
-  const displayImage = product.variants?.[0]?.image || 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=400';
+  const displayImage = product.coverImage || product.variants?.[0]?.image || 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=400';
   const variantCount = product.variants?.length || 0;
 
   return (
     <div 
-      onClick={() => navigate(`/product/${product._id}`)}
+      onClick={() => navigate(`/product/${product._id || product.id}`)}
       className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-white/5 bg-[#0b0f19]/40 p-4 transition-all duration-300 hover:border-indigo-500/20 hover:bg-[#0b0f19]/80 cursor-pointer"
     >
       <div>

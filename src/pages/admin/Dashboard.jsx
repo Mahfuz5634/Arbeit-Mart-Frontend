@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { getDb, initialProducts, initialOrders } from '../../utils/adminDb';
 import {
   AreaChart,
   Area,
@@ -19,30 +18,44 @@ export default function Dashboard() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    setProducts(getDb('admin-products', initialProducts));
-    setOrders(getDb('admin-orders', initialOrders));
+    const fetchData = async () => {
+      try {
+        const prodRes = await fetch('http://localhost:5000/api/product');
+        const prodData = await prodRes.json();
+        setProducts(Array.isArray(prodData) ? prodData : []);
+
+        const ordRes = await fetch('http://localhost:5000/api/order');
+        const ordData = await ordRes.json();
+        setOrders(Array.isArray(ordData) ? ordData : []);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data", error);
+      }
+    };
+    fetchData();
   }, []);
 
   const lowStockItems = [];
   products.forEach(product => {
-    product.variants.forEach(variant => {
-      if (variant.stock < 5) {
-        lowStockItems.push({
-          productId: product.id,
-          productName: product.name,
-          sku: variant.sku,
-          attributes: Object.entries(variant.attributeValues)
-            .map(([k, v]) => `${k}: ${v}`)
-            .join(', '),
-          stock: variant.stock
-        });
-      }
-    });
+    if (product && Array.isArray(product.variants)) {
+      product.variants.forEach(variant => {
+        if (variant && variant.stock < 5) {
+          lowStockItems.push({
+            productId: product._id,
+            productName: product.name,
+            sku: variant.sku,
+            attributes: Object.entries(variant.attributes || variant.attributeValues || {})
+              .map(([k, v]) => `${k}: ${v}`)
+              .join(', '),
+            stock: variant.stock
+          });
+        }
+      });
+    }
   });
 
   const totalSales = orders
-    .filter(o => o.status !== 'Cancelled')
-    .reduce((sum, o) => sum + o.total, 0);
+    .filter(o => o.orderStatus !== 'Cancelled')
+    .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
   const totalOrders = orders.length;
   const lowStockCount = lowStockItems.length;
@@ -75,7 +88,7 @@ export default function Dashboard() {
         <div className="p-6 rounded-2xl border border-white/10 bg-[#070b16]/60 backdrop-blur-xl flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Sales</p>
-            <h3 className="text-2xl font-bold text-white">${totalSales}</h3>
+            <h3 className="text-2xl font-bold text-white">৳ {totalSales.toLocaleString()}</h3>
           </div>
           <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-400">
             <DollarSign className="w-6 h-6" />

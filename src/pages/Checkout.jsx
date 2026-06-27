@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router';
 import Navbar from '../components/Navbar';
 import Toast from '../components/Toast';
 import Footer from '../components/Footer';
-import { getDb, saveDb, initialShipping, initialCoupons, initialOrders } from '../utils/adminDb';
 import { ArrowLeft, CreditCard, Truck, Tag, ShoppingBag } from 'lucide-react';
 
 export default function Checkout() {
@@ -11,7 +10,6 @@ export default function Checkout() {
 
   const [cart, setCart] = useState([]);
   const [shippingZones, setShippingZones] = useState([]);
-  const [coupons, setCoupons] = useState([]);
   const [toasts, setToasts] = useState([]);
 
   const [name, setName] = useState('');
@@ -36,6 +34,16 @@ export default function Checkout() {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
+  const fetchShippingZones = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/shipping');
+      const data = await res.json();
+      setShippingZones(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch shipping zones", error);
+    }
+  };
+
   useEffect(() => {
     try {
       const storedCart = localStorage.getItem('arbeit-cart');
@@ -45,44 +53,49 @@ export default function Checkout() {
     } catch (err) {
       console.error(err);
     }
-    setShippingZones(getDb('admin-shipping', initialShipping));
-    setCoupons(getDb('admin-coupons', initialCoupons));
+    fetchShippingZones();
   }, []);
 
   const itemsPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const selectedZone = shippingZones.find(z => z.id === Number(selectedZoneId));
+  const selectedZone = shippingZones.find(z => z._id === selectedZoneId);
   const shippingCost = selectedZone ? selectedZone.cost : 0;
 
   const discountApplied = appliedCoupon
-    ? appliedCoupon.type === 'Percentage'
-      ? Number(((itemsPrice * appliedCoupon.value) / 100).toFixed(2))
-      : appliedCoupon.value
+    ? Number(((itemsPrice * appliedCoupon.percentage) / 100).toFixed(2))
     : 0;
 
   const totalAmount = Math.max(0, itemsPrice + shippingCost - discountApplied);
 
-  const handleApplyCoupon = (e) => {
+  const handleApplyCoupon = async (e) => {
     e.preventDefault();
     if (!couponCode.trim()) return;
 
-    const coupon = coupons.find(c => c.code === couponCode.trim().toUpperCase());
-    if (!coupon) {
-      addToast("Invalid coupon code.", "error");
-      setAppliedCoupon(null);
-      return;
-    }
-    if (!coupon.active) {
-      addToast("This coupon code is expired or inactive.", "error");
-      setAppliedCoupon(null);
-      return;
-    }
+    try {
+      const res = await fetch('http://localhost:5000/api/coupon/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponCode.trim() })
+      });
+      const data = await res.json();
 
-    setAppliedCoupon(coupon);
-    addToast(`Coupon "${coupon.code}" applied successfully!`);
+      if (res.ok && data.success) {
+        setAppliedCoupon({
+          code: couponCode.trim().toUpperCase(),
+          percentage: data.discountPercentage
+        });
+        addToast(`Coupon "${couponCode.trim().toUpperCase()}" applied successfully!`);
+      } else {
+        addToast(data.message || "Invalid coupon code.", "error");
+        setAppliedCoupon(null);
+      }
+    } catch (error) {
+      addToast("Failed to validate coupon code.", "error");
+      setAppliedCoupon(null);
+    }
   };
 
-  const handleSubmitOrder = (e) => {
+  const handleSubmitOrder = async (e) => {
     e.preventDefault();
     if (cart.length === 0) {
       addToast("Your cart is empty.", "error");
@@ -93,38 +106,42 @@ export default function Checkout() {
       return;
     }
 
-    const newOrder = {
-      id: `ORD-${Date.now().toString().slice(-4)}`,
-      customerName: name,
-      date: new Date().toISOString().split('T')[0],
-      total: totalAmount,
-      status: 'Pending',
-      items: cart.map(item => ({
-        name: `${item.product.name} (${item.variant.sku})`,
+    const payload = {
+      customerInfo: { name, email, phone },
+      orderItems: cart.map(item => ({
+        product: item.product._id,
+        variantSku: item.variant.sku,
         quantity: item.quantity,
         price: item.price
       })),
-      customerInfo: { name, email, phone },
       shippingAddress: { address, city, postalCode },
       shippingZone: selectedZoneId,
-      couponInfo: appliedCoupon ? { code: appliedCoupon.code, discountApplied } : { code: '', discountApplied: 0 },
-      paymentMethod,
-      itemsPrice,
-      shippingCost,
-      totalAmount
+      couponCode: appliedCoupon ? appliedCoupon.code : "",
+      paymentMethod
     };
 
-    const currentOrders = getDb('admin-orders', initialOrders);
-    const updatedOrders = [newOrder, ...currentOrders];
-    saveDb('admin-orders', updatedOrders);
+    try {
+      const res = await fetch('http://localhost:5000/api/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    localStorage.removeItem('arbeit-cart');
-    setCart([]);
-    addToast("Order placed successfully! Redirecting...");
-    
-    setTimeout(() => {
-      navigate('/');
-    }, 1500);
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.removeItem('arbeit-cart');
+        setCart([]);
+        addToast("Order placed successfully! Redirecting...");
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+      } else {
+        addToast(data.message || "Failed to submit order.", "error");
+      }
+    } catch (error) {
+      addToast("Failed to connect to the server.", "error");
+    }
   };
 
   return (
@@ -216,8 +233,8 @@ export default function Checkout() {
                       >
                         <option value="">Select Zone</option>
                         {shippingZones.map(zone => (
-                          <option key={zone.id} value={zone.id}>
-                            {zone.name} (+৳ {zone.cost})
+                          <option key={zone._id} value={zone._id}>
+                            {zone.zoneName} (+৳ {zone.cost})
                           </option>
                         ))}
                       </select>
@@ -241,7 +258,7 @@ export default function Checkout() {
                   type="submit"
                   className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-lg shadow-indigo-600/20"
                 >
-                  Place Order (৳ {totalAmount})
+                  Place Order (৳ {totalAmount.toLocaleString()})
                 </button>
               </form>
             </div>
@@ -285,21 +302,21 @@ export default function Checkout() {
                 <div className="space-y-2 border-t border-white/5 pt-4 text-xs">
                   <div className="flex justify-between text-slate-400">
                     <span>Subtotal</span>
-                    <span className="text-slate-200">৳ {itemsPrice}</span>
+                    <span className="text-slate-200">৳ {itemsPrice.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>Shipping Cost</span>
-                    <span className="text-slate-200">৳ {shippingCost}</span>
+                    <span className="text-slate-200">৳ {shippingCost.toLocaleString()}</span>
                   </div>
                   {discountApplied > 0 && (
                     <div className="flex justify-between text-indigo-400">
                       <span>Discount</span>
-                      <span>- ৳ {discountApplied}</span>
+                      <span>- ৳ {discountApplied.toLocaleString()}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm font-bold border-t border-white/5 pt-3">
                     <span className="text-white">Total Amount</span>
-                    <span className="text-indigo-400">৳ {totalAmount}</span>
+                    <span className="text-indigo-400">৳ {totalAmount.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

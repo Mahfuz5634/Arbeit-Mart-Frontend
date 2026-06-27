@@ -19,10 +19,10 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 font-sans antialiased flex flex-col md:flex-row">
-      <aside className="w-full md:w-64 border-b md:border-b-0 md:border-r border-white/10 bg-[#070b16]/60 backdrop-blur-xl flex flex-col">
+      <aside className="w-full md:w-64 md:fixed md:inset-y-0 md:left-0 border-b md:border-b-0 md:border-r border-white/10 bg-[#070b16]/60 backdrop-blur-xl flex flex-col z-30">
         <div className="p-6 border-b border-white/10 flex items-center justify-between">
-          <Link to="/admin/dashboard" className="text-lg font-bold tracking-tight text-white font-display">
-            Admin Panel
+          <Link to="/admin/dashboard" className="text-lg font-bold tracking-tight text-white font-display uppercase tracking-wider">
+            Arbeit Mart
           </Link>
           <div className="flex items-center gap-3">
             <Link to="/" className="text-slate-400 hover:text-white transition-colors duration-200" title="Storefront">
@@ -61,7 +61,7 @@ export default function AdminLayout() {
         </nav>
       </aside>
 
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+      <main className="flex-1 p-6 md:p-10 overflow-y-auto md:ml-64">
         <Outlet />
       </main>
     </div>

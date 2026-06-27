@@ -71,7 +71,7 @@ const CartDrawer = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem
             </div>
           ) : (
             cartItems.map((item, idx) => {
-              const displayImage = item.variant.image || item.product.variants?.[0]?.image || 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=200';
+              const displayImage = item.variant.image || item.product.coverImage || item.product.variants?.[0]?.image || 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=200';
               const variantName = item.variant.name || 'Default';
               const itemKey = `${item.product._id}-${variantName}-${idx}`;
 

@@ -1,57 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import { getDb, saveDb, initialCoupons } from '../../utils/adminDb';
 import { Plus, Trash2, Ticket, Check, X } from 'lucide-react';
 
 export default function Coupons() {
   const [coupons, setCoupons] = useState([]);
   const [code, setCode] = useState('');
-  const [type, setType] = useState('Percentage');
   const [value, setValue] = useState('');
   const [active, setActive] = useState(true);
 
+  const fetchCoupons = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/coupon');
+      const data = await res.json();
+      setCoupons(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch coupons", error);
+    }
+  };
+
   useEffect(() => {
-    setCoupons(getDb('admin-coupons', initialCoupons));
+    fetchCoupons();
   }, []);
 
-  const handleCreateCoupon = (e) => {
+  const handleCreateCoupon = async (e) => {
     e.preventDefault();
     if (!code.trim() || !value) return;
 
-    const newCoupon = {
-      id: Date.now(),
-      code: code.trim().toUpperCase(),
-      type,
-      value: Number(value),
-      active
-    };
+    try {
+      const res = await fetch('http://localhost:5000/api/coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: code.trim().toUpperCase(),
+          discountPercentage: Number(value),
+          expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          isActive: active
+        })
+      });
 
-    const updated = [...coupons, newCoupon];
-    setCoupons(updated);
-    saveDb('admin-coupons', updated);
-
-    setCode('');
-    setValue('');
-    setActive(true);
+      if (res.ok) {
+        fetchCoupons();
+        setCode('');
+        setValue('');
+        setActive(true);
+      } else {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("Failed to create coupon", error);
+    }
   };
 
-  const handleToggleActive = (id) => {
-    const updated = coupons.map(c => c.id === id ? { ...c, active: !c.active } : c);
-    setCoupons(updated);
-    saveDb('admin-coupons', updated);
+  const handleToggleActive = async (id, currentActive) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/coupon/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !currentActive })
+      });
+      if (res.ok) {
+        fetchCoupons();
+      }
+    } catch (error) {
+      console.error("Failed to toggle coupon active status", error);
+    }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Delete this coupon code?")) return;
-    const updated = coupons.filter(c => c.id !== id);
-    setCoupons(updated);
-    saveDb('admin-coupons', updated);
+    try {
+      const res = await fetch(`http://localhost:5000/api/coupon/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        fetchCoupons();
+      }
+    } catch (error) {
+      console.error("Failed to delete coupon", error);
+    }
   };
 
   return (
     <div className="space-y-8 max-w-5xl">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-white font-display">Coupons & Discounts</h1>
-        <p className="text-sm text-slate-400 mt-1">Create promotional codes, toggle active statuses, and configure discount types.</p>
+        <p className="text-sm text-slate-400 mt-1">Create promotional codes, toggle active statuses, and configure discount percentages.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -72,29 +105,17 @@ export default function Coupons() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-400 block mb-1">Discount Type</label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer"
-              >
-                <option value="Percentage">Percentage (%)</option>
-                <option value="Fixed">Fixed Amount ($)</option>
-              </select>
-            </div>
-
-            <div>
               <label className="text-xs font-semibold text-slate-400 block mb-1">
-                Discount Value {type === 'Percentage' ? '(%)' : '($)'}
+                Discount Percentage (%)
               </label>
               <input
                 type="number"
                 required
-                min="0.01"
-                step="0.01"
+                min="1"
+                max="100"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder={type === 'Percentage' ? '20' : '15'}
+                placeholder="20"
                 className="w-full bg-[#020617] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
@@ -133,7 +154,6 @@ export default function Coupons() {
                 <thead className="text-xs uppercase text-slate-400 border-b border-white/10">
                   <tr>
                     <th className="py-3 px-4">Code</th>
-                    <th className="py-3 px-4">Type</th>
                     <th className="py-3 px-4">Discount</th>
                     <th className="py-3 px-4 text-center">Status</th>
                     <th className="py-3 px-4 text-right">Action</th>
@@ -141,27 +161,26 @@ export default function Coupons() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {coupons.map((coupon) => (
-                    <tr key={coupon.id} className="hover:bg-white/[0.01] transition-colors">
+                    <tr key={coupon._id} className="hover:bg-white/[0.01] transition-colors">
                       <td className="py-3.5 px-4 font-mono text-sm text-white font-semibold tracking-wider">
                         <span className="flex items-center gap-2">
                           <Ticket className="w-4 h-4 text-indigo-400" />
                           {coupon.code}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-xs text-slate-400">{coupon.type}</td>
                       <td className="py-3.5 px-4 font-medium text-white">
-                        {coupon.type === 'Percentage' ? `${coupon.value}%` : `$${coupon.value}`}
+                        {coupon.discountPercentage}%
                       </td>
                       <td className="py-3.5 px-4 text-center">
                         <button
-                          onClick={() => handleToggleActive(coupon.id)}
+                          onClick={() => handleToggleActive(coupon._id, coupon.isActive)}
                           className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
-                            coupon.active
+                            coupon.isActive
                               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                               : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
                           }`}
                         >
-                          {coupon.active ? (
+                          {coupon.isActive ? (
                             <>
                               <Check className="w-3 h-3" /> Active
                             </>
@@ -174,7 +193,7 @@ export default function Coupons() {
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <button
-                          onClick={() => handleDelete(coupon.id)}
+                          onClick={() => handleDelete(coupon._id)}
                           className="p-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />

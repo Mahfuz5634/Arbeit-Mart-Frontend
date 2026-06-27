@@ -60,12 +60,12 @@ const ProductDetail = () => {
         if (data) {
           setProduct(data);
          
-          if (data.variants && data.variants.length > 0) {
-            setSelectedAttributes(data.variants[0].attributes || {});
-          } else if (data.attributes && data.attributes.length > 0) {
+          if (data.variants && data.variants.length > 0 && data.variants[0]) {
+            setSelectedAttributes(data.variants[0].attributes || data.variants[0].attributeValues || {});
+          } else if (data.attributes && Array.isArray(data.attributes) && data.attributes.length > 0) {
             const initial = {};
             data.attributes.forEach(attr => {
-              if (attr.values && attr.values.length > 0) {
+              if (attr && Array.isArray(attr.values) && attr.values.length > 0) {
                 initial[attr.name] = attr.values[0];
               }
             });
@@ -86,13 +86,15 @@ const ProductDetail = () => {
   }, [id]);
 
   const getMatchedVariant = () => {
-    if (!product || !product.variants) return null;
+    if (!product || !product.variants || !Array.isArray(product.variants)) return null;
     return product.variants.find(variant => {
-      if (!variant.attributes) return false;
-      return Object.entries(selectedAttributes).every(([key, val]) => {
-        const variantAttrVal = variant.attributes instanceof Map 
-          ? variant.attributes.get(key) 
-          : variant.attributes[key];
+      if (!variant) return false;
+      const attrs = variant.attributes || variant.attributeValues;
+      if (!attrs || typeof attrs !== 'object') return false;
+      return Object.entries(selectedAttributes || {}).every(([key, val]) => {
+        const variantAttrVal = attrs instanceof Map 
+          ? attrs.get(key) 
+          : attrs[key];
         return variantAttrVal === val;
       });
     });
@@ -100,8 +102,9 @@ const ProductDetail = () => {
 
   const matchedVariant = getMatchedVariant();
   
-  const displayImage = matchedVariant?.image || product?.variants?.[0]?.image || 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=600';
-  const price = matchedVariant?.price || product?.basePrice || 0;
+  const displayImage = matchedVariant?.image || product?.coverImage || product?.variants?.[0]?.image || 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=600';
+  const priceVal = Number(matchedVariant?.price || product?.basePrice || 0);
+  const basePriceVal = Number(product?.basePrice || 0);
   const sku = matchedVariant?.sku || 'N/A';
   const stock = matchedVariant ? (matchedVariant.stock ?? 0) : 0;
   const isOutOfStock = stock <= 0;
@@ -112,17 +115,20 @@ const ProductDetail = () => {
       
       if (product.variants) {
         const hasMatch = product.variants.some(v => {
-          const vAttrVal = v.attributes instanceof Map ? v.attributes.get(attrName) : v.attributes?.[attrName];
+          const attrs = v.attributes || v.attributeValues;
+          const vAttrVal = attrs instanceof Map ? attrs.get(attrName) : attrs?.[attrName];
           return vAttrVal === value;
         });
 
         if (hasMatch) {
           const matchingVariant = product.variants.find(v => {
-            const vAttrVal = v.attributes instanceof Map ? v.attributes.get(attrName) : v.attributes?.[attrName];
+            const attrs = v.attributes || v.attributeValues;
+            const vAttrVal = attrs instanceof Map ? attrs.get(attrName) : attrs?.[attrName];
             return vAttrVal === value;
           });
-          if (matchingVariant && matchingVariant.attributes) {
-            return { ...matchingVariant.attributes, [attrName]: value };
+          const matchingAttrs = matchingVariant?.attributes || matchingVariant?.attributeValues;
+          if (matchingVariant && matchingAttrs) {
+            return { ...matchingAttrs, [attrName]: value };
           }
         }
       }
@@ -170,7 +176,7 @@ const ProductDetail = () => {
         product,
         variant: matchedVariant,
         quantity,
-        price
+        price: priceVal
       });
     }
 
@@ -255,23 +261,25 @@ const ProductDetail = () => {
                   </span>
                 </div>
 
-                {product.variants?.length > 1 && (
+                {product.variants && Array.isArray(product.variants) && product.variants.filter(Boolean).length > 1 && (
                   <div className="flex gap-2 overflow-x-auto py-1">
-                    {product.variants.map((v, idx) => {
-                      const isSelected = Object.entries(v.attributes || {}).every(
+                    {product.variants.filter(Boolean).map((v, idx) => {
+                      const rawAttrs = v.attributes || v.attributeValues || {};
+                      const attrs = (typeof rawAttrs === 'object' && rawAttrs !== null) ? rawAttrs : {};
+                      const isSelected = Object.entries(attrs).every(
                         ([key, val]) => selectedAttributes[key] === val
                       );
                       return (
                         <button
                           key={v.sku + idx}
-                          onClick={() => setSelectedAttributes(v.attributes || {})}
+                          onClick={() => setSelectedAttributes(attrs)}
                           className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border transition-all duration-200 ${
                             isSelected 
                               ? 'border-indigo-500 ring-2 ring-indigo-500/25' 
                               : 'border-white/5 hover:border-white/20'
                           }`}
                         >
-                          <img src={v.image} alt={v.name} className="h-full w-full object-cover object-center" />
+                          <img src={v.image} alt={v.name || product.name} className="h-full w-full object-cover object-center" />
                         </button>
                       );
                     })}
@@ -296,9 +304,9 @@ const ProductDetail = () => {
                   <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-white font-display leading-tight">{product.name}</h1>
                   
                   <div className="mt-3.5 flex items-baseline gap-2">
-                    <span className="text-3xl font-extrabold text-white">৳ {price.toLocaleString()}</span>
-                    {matchedVariant && matchedVariant.price !== product.basePrice && (
-                      <span className="text-sm text-slate-500 line-through">৳ {product.basePrice.toLocaleString()}</span>
+                    <span className="text-3xl font-extrabold text-white">৳ {priceVal.toLocaleString()}</span>
+                    {matchedVariant && priceVal !== basePriceVal && (
+                      <span className="text-sm text-slate-500 line-through">৳ {basePriceVal.toLocaleString()}</span>
                     )}
                   </div>
 
@@ -307,15 +315,15 @@ const ProductDetail = () => {
                     <p className="mt-2.5 text-sm leading-relaxed text-slate-400">{product.description}</p>
                   </div>
 
-                  {product.attributes?.length > 0 && (
+                  {product.attributes && Array.isArray(product.attributes) && product.attributes.length > 0 && (
                     <div className="mt-6 space-y-5 border-t border-white/5 pt-5">
-                      {product.attributes.map((attr) => (
+                      {product.attributes.filter(Boolean).map((attr) => (
                         <div key={attr.name}>
                           <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             {attr.name}
                           </label>
                           <div className="mt-2.5 flex flex-wrap gap-2.5">
-                            {attr.values?.map((val) => {
+                            {Array.isArray(attr.values) && attr.values.map((val) => {
                               const isSelected = selectedAttributes[attr.name] === val;
                               return (
                                 <button

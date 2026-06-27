@@ -1,16 +1,46 @@
-# React + Vite
+# Arbeit Mart E-Commerce Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a complete, single-vendor full-stack e-commerce application designed and implemented for the technical hiring assignment.
 
-Currently, two official plugins are available:
+## Stack & Architecture
+- **Frontend**: React (Vite), Tailwind CSS, Lucide Icons, Recharts, GSAP (animations)
+- **Backend**: Node.js, Express, MongoDB (Mongoose ORM)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features Included
+1. **Public Storefront**:
+   - Interactive hero banner with GSAP animations.
+   - Search bar with live filtering.
+   - Filter by Category, Price Range, and In-Stock status.
+   - Dynamic product detail page with option selectors (Color, Size, etc.) and auto-matched price, SKU, stock level, and image changes.
+2. **Cart & Checkout**:
+   - Slide-out Cart Drawer with real-time subtotal calculations, quantities adjustments, and deletion.
+   - Checkout form capturing customer details, postal codes, and shipping address.
+   - Automated server-side checkout calculations (shipping fees based on zone, discount calculations from Coupon codes).
+   - Stock deduction upon order submission.
+3. **Admin Dashboard**:
+   - Real-time Sales Overview, total orders, low stock count, and active products count.
+   - Sales trends area chart and Order Funnel bar chart.
+   - **Variable Product Manager**: Create variable products with customized options attributes, auto-generate variant combinations, upload variant images, assign prices/inventory stock levels, and add variants manually.
+   - **Coupons Management**: Generate promotional discount codes and toggle active/inactive status.
+   - **Shipping Management**: Add/delete shipping zones, regions, and delivery costs.
+   - **Order Control Panel**: Update orders statuses (Pending -> Confirmed -> Shipped -> Delivered) and review shipping address/transaction logs.
 
-## React Compiler
+## Setup & Running Locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. Run the Backend
+Navigate to the backend directory `arbeit-mart-backend` and start the server:
+```bash
+cd arbeit-mart-backend
+npm install
+npm run dev
+```
+The backend server runs on `http://localhost:5000`.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2. Run the Frontend
+Navigate to the frontend directory `arbeit-mart-frontend` and start the development server:
+```bash
+cd arbeit-mart-frontend
+npm install
+npm run dev
+```
+The frontend dev server runs on `http://localhost:5173`.
