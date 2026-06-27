@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import Navbar from '../components/Navbar';
 import Toast from '../components/Toast';
 import Footer from '../components/Footer';
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -80,6 +80,14 @@ const Login = () => {
         />
 
         <main className="mx-auto max-w-md px-6 py-20">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-white transition-colors duration-200 mb-6"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Store</span>
+          </Link>
+
           <div className="rounded-3xl border border-white/10 bg-[#070b16]/60 backdrop-blur-xl p-8 shadow-2xl relative overflow-hidden">
             <div className="absolute -top-24 -left-24 h-48 w-48 rounded-full bg-indigo-500/10 blur-[80px] pointer-events-none" />
             <div className="absolute -bottom-24 -right-24 h-48 w-48 rounded-full bg-violet-600/10 blur-[80px] pointer-events-none" />

@@ -109,6 +109,10 @@ const CartDrawer = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem
               <span className="text-slate-400">Total</span>
               <span className="text-white">৳ {subtotal.toLocaleString()}</span>
             </div>
+
+            <p className="text-[10px] text-slate-500 text-center">
+              Guest checkout active. No registration required to order.
+            </p>
             
             <div className="flex gap-2">
               <button onClick={onClearCart} className="w-1/3 py-2 bg-white/[0.02] border border-white/5 text-slate-400 hover:text-red-400 text-xs rounded-xl transition-all">

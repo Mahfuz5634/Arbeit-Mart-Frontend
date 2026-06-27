@@ -36,7 +36,7 @@ const Hero = () => {
   return (
     <section 
       ref={heroRef} 
-      className="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-slate-950 pt-20 pb-24 md:min-h-[80vh] md:pt-32 md:pb-40"
+      className="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-slate-950 pt-36 pb-24 md:min-h-[80vh] md:pt-48 md:pb-40"
     >
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-80 mix-blend-luminosity"
