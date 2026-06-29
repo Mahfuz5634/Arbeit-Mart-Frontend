@@ -51,7 +51,7 @@ const ProductDetail = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`http://localhost:5000/api/product/${id}`);
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/product/${id}`);
         if (!res.ok) {
           throw new Error(`Failed to fetch product (Status: ${res.status})`);
         }
