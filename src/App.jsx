@@ -199,7 +199,6 @@ export default function App() {
           <div className="flex flex-col gap-6 border-b border-white/5 pb-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Arbeit Lab Inventory</span>
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1 font-display">Product Catalog</h2>
                 <p className="text-xs sm:text-sm text-slate-400 mt-1">Select an item to view variable options & specifications.</p>
               </div>
