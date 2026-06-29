@@ -216,7 +216,7 @@ export default function App() {
             </div>
 
             {/* Filter and Search Bar Container */}
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-slate-900/30 p-4 rounded-2xl border border-white/5">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4  p-4 rounded-2xl border border-white/5">
               {/* Category selector */}
               <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none -mx-2 px-2 lg:mx-0 lg:px-0">
                 {categories.map((cat) => (

@@ -6,6 +6,7 @@ const Navbar = ({ cartCount = 0, onCartClick, floating = false }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('arbeit-user');
@@ -50,28 +51,50 @@ const Navbar = ({ cartCount = 0, onCartClick, floating = false }) => {
 
         <div className="flex items-center gap-4 sm:gap-6">
           {user ? (
-            <div className="relative group flex items-center gap-3">
-              <div className="flex flex-col items-end hidden sm:flex text-right cursor-pointer py-2">
-                <span className="text-xs font-semibold text-slate-200 leading-tight">
-                  {user.user?.name || user.name}
-                </span>
-                <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-400">
-                  {user.user?.role || user.role}
-                </span>
-              </div>
+            <div className="relative flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center gap-2.5 cursor-pointer py-1 focus:outline-none"
+              >
+                <div className="flex flex-col items-end hidden sm:flex text-right">
+                  <span className="text-xs font-semibold text-slate-200 leading-tight">
+                    {user.user?.name || user.name}
+                  </span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-400 mt-0.5">
+                    {user.user?.role || user.role}
+                  </span>
+                </div>
+                <div className="w-8 h-8 rounded-full bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-400 font-bold text-xs select-none">
+                  {user.user?.name ? user.user.name.substring(0, 1).toUpperCase() : (user.name ? user.name.substring(0, 1).toUpperCase() : 'U')}
+                </div>
+              </button>
+
+              {isUserMenuOpen && (
+                <div 
+                  onClick={() => setIsUserMenuOpen(false)}
+                  className="fixed inset-0 z-40 bg-transparent cursor-default"
+                />
+              )}
               
-              <div className="absolute right-0 top-full pt-2 w-32 origin-top-right opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+              <div className={`absolute right-0 top-full pt-2 w-32 origin-top-right transition-all duration-200 z-50 ${
+                isUserMenuOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
+              }`}>
                 <div className="rounded-xl border border-white/10 bg-[#070b16] p-1.5 shadow-xl">
                   {(user.user?.role === 'admin' || user.role === 'admin') && (
                     <Link
                       to="/admin/dashboard"
-                      className="flex w-full items-center px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-indigo-600 hover:text-white transition-colors"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="flex w-full items-center px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-indigo-650 hover:text-white transition-colors"
                     >
                       Dashboard
                     </Link>
                   )}
                   <button
-                    onClick={handleLogout}
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      handleLogout();
+                    }}
                     className="flex w-full items-center text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors cursor-pointer"
                   >
                     Logout

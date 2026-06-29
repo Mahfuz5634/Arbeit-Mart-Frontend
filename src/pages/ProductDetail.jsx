@@ -381,10 +381,7 @@ const ProductDetail = () => {
                     </button>
                   </div>
 
-                  <div className="mt-4 flex items-center gap-1.5 justify-center sm:justify-start text-[10px] text-slate-500">
-                    <Info className="h-3 w-3" />
-                    <span>Free secure shipping & 1-year product warranty.</span>
-                  </div>
+                  
                 </div>
 
               </div>
