@@ -9,7 +9,7 @@ export default function Shipping() {
 
   const fetchShippingZones = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/shipping');
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/shipping`);
       const data = await res.json();
       setShippingZones(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -26,7 +26,7 @@ export default function Shipping() {
     if (!name.trim() || !region.trim() || !cost) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/shipping', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/shipping`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -53,7 +53,7 @@ export default function Shipping() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this shipping zone?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/shipping/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/shipping/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
