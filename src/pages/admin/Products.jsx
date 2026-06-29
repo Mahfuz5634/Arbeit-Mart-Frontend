@@ -461,8 +461,7 @@ export default function Products() {
                     {/* Preset Templates */}
                     <div className="bg-slate-950 p-4 rounded-xl border border-white/5 space-y-3">
                       <div className="flex items-center gap-1.5 text-xs text-slate-300 font-semibold">
-                        <Zap className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Quick Attribute Presets</span>
+                       <span>Quick Attribute Presets</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <button 
@@ -517,7 +516,7 @@ export default function Products() {
                 <div className="bg-slate-900 rounded-2xl border border-white/5 overflow-hidden">
                   <div className="p-4 border-b border-white/5 bg-[#0b0f19]/35 flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-2">
-                      <Layers className="w-4.5 h-4.5 text-indigo-400" />
+      
                       <h3 className="font-bold text-white text-xs uppercase tracking-wider">Combinations & Matrix</h3>
                     </div>
                     <div className="flex items-center gap-2">
