@@ -79,7 +79,7 @@ export default function AdminLayout() {
           {/* Header Branding */}
           <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
             <div>
-              <Link to="/admin/dashboard" className="text-sm font-bold tracking-widest text-white font-display block select-none">
+              <Link to="/admin/dashboard" className="text-md font-bold tracking-widest text-white font-display block select-none">
                 ARBEIT<span className="font-light text-indigo-400">MART</span>
               </Link>
               <span className="text-[8px] font-bold uppercase tracking-wider text-indigo-400/90 block mt-0.5">Control Center</span>
