@@ -10,7 +10,7 @@ import Checkout from "./pages/Checkout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 import AdminLayout from "./components/AdminLayout.jsx";
-import AdminDashboard from "./pages/admin/Dashboard.jsx";
+import AdminDashboard from "./pages/admin/DashboardOverview.jsx";
 import AdminProducts from "./pages/admin/Products.jsx";
 import AdminOrders from "./pages/admin/Orders.jsx";
 import AdminCoupons from "./pages/admin/Coupons.jsx";
