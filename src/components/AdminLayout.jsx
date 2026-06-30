@@ -52,15 +52,15 @@ export default function AdminLayout() {
       
       {/* Mobile Sticky Header Bar */}
       <header className="md:hidden flex items-center justify-between px-6 py-4 bg-[#070b16]/80 backdrop-blur-xl border-b border-white/[0.06] sticky top-0 z-30">
-        <div>
-          <span className="text-xs font-bold tracking-widest text-white">ARBEIT<span className="text-indigo-400">MART</span></span>
-        </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-1.5 rounded-lg bg-white/[0.02] border border-white/5 text-slate-400 hover:text-white transition-colors cursor-pointer"
         >
           {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
+        <div>
+          <span className="text-xs font-bold tracking-widest text-white">ARBEIT<span className="text-indigo-400">MART</span></span>
+        </div>
       </header>
 
       {/* Mobile Drawer Overlay Backdrop */}
