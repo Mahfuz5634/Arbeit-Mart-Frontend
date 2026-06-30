@@ -63,7 +63,7 @@ export default function AdminLayout() {
         </div>
       </header>
 
-      {/* Mobile Drawer Overlay Backdrop */}
+      {/* Mobile Drawer Overlay  */}
       {isMobileMenuOpen && (
         <div 
           onClick={() => setIsMobileMenuOpen(false)}
@@ -71,12 +71,11 @@ export default function AdminLayout() {
         />
       )}
 
-      {/* Sidebar drawer panel */}
+      {/* Sidebar drawer  */}
       <aside className={`fixed inset-y-0 left-0 w-64 bg-[#070b16] border-r border-white/[0.06] flex flex-col justify-between z-40 transition-transform duration-300 md:translate-x-0 ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div>
-          {/* Header */}
           <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
             <div>
               <Link to="/admin/dashboard" className="text-md font-bold tracking-widest text-white font-display block select-none">

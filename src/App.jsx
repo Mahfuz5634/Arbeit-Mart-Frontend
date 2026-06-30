@@ -203,7 +203,6 @@ export default function App() {
                 <p className="text-xs sm:text-sm text-slate-400 mt-1">Select an item to view variable options & specifications.</p>
               </div>
 
-              {/* Reset active filters count badge */}
               {hasActiveFilters && (
                 <button
                   onClick={resetFilters}
@@ -217,7 +216,6 @@ export default function App() {
 
             {/* Filter and Search Bar Container */}
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4  p-4 rounded-2xl border border-white/5">
-              {/* Category selector */}
               <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none -mx-2 px-2 lg:mx-0 lg:px-0">
                 {categories.map((cat) => (
                   <button

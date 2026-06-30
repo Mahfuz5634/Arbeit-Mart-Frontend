@@ -26,7 +26,7 @@ export default function Coupons() {
     if (!code.trim() || !value) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/coupon', {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/coupon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -53,7 +53,7 @@ export default function Coupons() {
 
   const handleToggleActive = async (id, currentActive) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/coupon/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/coupon/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isActive: !currentActive })
@@ -69,7 +69,7 @@ export default function Coupons() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this coupon code?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/coupon/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/coupon/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

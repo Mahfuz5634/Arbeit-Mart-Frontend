@@ -14,17 +14,17 @@ export default function Checkout() {
   const [shippingZones, setShippingZones] = useState([]);
   const [toasts, setToasts] = useState([]);
 
-  // Customer Info states
+  // Customer Info 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
-  // Shipping Destination states
+  // Shipping Destination
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
-  // Order Options states
+  // Order Options
   const [selectedZoneId, setSelectedZoneId] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -79,7 +79,7 @@ export default function Checkout() {
 
   const totalAmount = Math.max(0, itemsPrice + shippingCost - discountApplied);
 
-  // Auto-group card digits into blocks of 4
+
   const handleCardNumberChange = (e) => {
     const value = e.target.value.replace(/\D/g, '').substring(0, 16);
     const parts = [];
@@ -89,7 +89,7 @@ export default function Checkout() {
     setCardNumber(parts.join(' '));
   };
 
-  // Auto-format expiry date with a slash MM/YY
+  // Auto-format expiry date 
   const handleExpiryChange = (e) => {
     let value = e.target.value.replace(/\D/g, '').substring(0, 4);
     if (value.length > 2) {
@@ -98,7 +98,7 @@ export default function Checkout() {
     setCardExpiry(value);
   };
 
-  // Limit CVV input to 3 digits
+
   const handleCvvChange = (e) => {
     const value = e.target.value.replace(/\D/g, '').substring(0, 3);
     setCardCvv(value);
@@ -219,8 +219,8 @@ export default function Checkout() {
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            
-            {/* Form details Column */}
+          
+            {/* Form details */}
             <div className="lg:col-span-7">
               <form onSubmit={handleSubmitOrder} className="space-y-6">
                 

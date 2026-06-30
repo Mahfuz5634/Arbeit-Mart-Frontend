@@ -29,7 +29,7 @@ const ProductCard = ({ product, onAddToCart }) => {
 
   const colors = getUniqueColors();
 
-  // Calculate total stock levels across variants
+  // Calculate total stock levels 
   const totalStock = product.variants && Array.isArray(product.variants)
     ? product.variants.reduce((acc, v) => acc + (v.stock || 0), 0)
     : (product.stock || 0);
@@ -58,7 +58,7 @@ const ProductCard = ({ product, onAddToCart }) => {
       className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.04] bg-[#0b0f19]/30 p-4 transition-all duration-300 hover:border-indigo-500/25 hover:bg-[#0b0f19]/70 hover:shadow-[0_0_30px_rgba(99,102,241,0.08)] cursor-pointer"
     >
       <div>
-        {/* Product Image Panel */}
+        {/* Product Image  */}
         <div className="relative aspect-square overflow-hidden rounded-xl bg-slate-900/60 border border-white/5">
           <img
             src={displayImage}
@@ -86,7 +86,7 @@ const ProductCard = ({ product, onAddToCart }) => {
             {product.description}
           </p>
 
-          {/* Option Indicators */}
+          {/* Option */}
           <div className="flex items-center justify-between mt-2 min-h-[16px]">
             {variantCount > 0 ? (
               <span className="text-[9px] text-indigo-400/90 font-bold uppercase tracking-wider block">
@@ -96,7 +96,6 @@ const ProductCard = ({ product, onAddToCart }) => {
               <span className="text-[9px] text-slate-600 block uppercase font-medium">Standard</span>
             )}
 
-            {/* Colors Circles */}
             {colors.length > 0 && (
               <div className="flex gap-1">
                 {colors.map(col => (
@@ -113,7 +112,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         </div>
       </div>
 
-      {/* Footer Info */}
+      {/* Footer */}
       <div className="mt-4 flex items-center justify-between gap-2 border-t border-white/5 pt-3">
         <p className="text-xs font-bold text-white tracking-wide">৳ {product.basePrice.toLocaleString()}</p>
         <div className="flex items-center gap-2.5">

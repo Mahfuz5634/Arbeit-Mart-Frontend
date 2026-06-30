@@ -17,7 +17,7 @@ export default function AdminLayout() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // Close mobile drawer on path changes
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
@@ -76,7 +76,6 @@ export default function AdminLayout() {
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div>
-          {/* Header Branding */}
           <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
             <div>
               <Link to="/admin/dashboard" className="text-md font-bold tracking-widest text-white font-display block select-none">
@@ -118,7 +117,7 @@ export default function AdminLayout() {
           </nav>
         </div>
 
-        {/* User Card Profile Panel */}
+        {/* User Profile Panel */}
         <div className="p-4 border-t border-white/[0.06] bg-slate-950/20">
           <div className="flex items-center justify-between gap-3 bg-white/[0.01] border border-white/5 rounded-2xl p-3">
             <div className="flex items-center gap-2.5 overflow-hidden">
@@ -142,7 +141,7 @@ export default function AdminLayout() {
         </div>
       </aside>
 
-      {/* Main Outlet Workspace */}
+      {/*Outlet*/}
       <main className="flex-1 p-6 md:p-10 overflow-y-auto md:ml-64 bg-[#020617]">
         <div className="mx-auto max-w-6xl">
           <Outlet />
