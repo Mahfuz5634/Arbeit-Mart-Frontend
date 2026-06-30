@@ -9,7 +9,7 @@ import Login from "./pages/Login.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
-import AdminLayout from "./components/AdminLayout.jsx";
+import AdminLayout from "./pages/admin/DashboardLayout.jsx";
 import AdminDashboard from "./pages/admin/DashboardOverview.jsx";
 import AdminProducts from "./pages/admin/Products.jsx";
 import AdminOrders from "./pages/admin/Orders.jsx";
